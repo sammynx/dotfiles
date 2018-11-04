@@ -23,4 +23,5 @@ devmon --no-gui &                   # udiskie replacement without dependencys, p
 sh .fehbg &                         # sets background image
 /usr/local/bin/bat_low_warning &    # Low battery notifications
 
-exec /usr/bin/i3 -V > ~/.config/i3/i3.log  # start WM
+# start WM and enable WM logging
+exec /usr/bin/i3 -V > ~/.config/i3/i3.log
