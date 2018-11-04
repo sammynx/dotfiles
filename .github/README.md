@@ -6,9 +6,11 @@ Requirements: git curl
 Install
 -------
 
-Download and run this script in home directory `curl -Lks  https://raw.githubusercontent.com/sammynx/dotfiles/master/projects/scripts/dotfiles-install.sh | /bin/bash`
+Download and run this install script.
 
-This clones the dotfiles onto new system. Pre existing dotfiles will be backed up to `.config-backup`
+`curl -Lks  https://raw.githubusercontent.com/sammynx/dotfiles/master/projects/scripts/dotfiles-install.sh | /bin/bash`
+
+This clones the dotfiles onto new system. Pre existing dotfiles will be backed up to `.dotfiles-backup`
 
 Use
 ---
