@@ -1,0 +1,10 @@
+set editing-mode vi
+set show-mode-in-prompt on
+set vi-cmd-mode-string :
+set vi-ins-mode-string +
+
+# Partially complete the word and show all possible completions if it is still ambiguous
+#set show-all-if-ambiguous on
+
+"\e[1;5D": backward-word
+"\e[1;5C": forward-word
