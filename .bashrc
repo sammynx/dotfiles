@@ -88,6 +88,9 @@ alias psg="ps aux | grep -v grep | grep -e VSZ -i -e"
 alias weather='curl -m 10 http://wttr.in/uithoorn'
 alias moon='curl -m 10 http://wttr.in/Moon'
 alias bundlesupdate='cd ~/.vim/bundle; for bundle in * ; do if [[ -d "$bundle/.git" ]]; then echo "Bundle: $bundle..."; cd "$bundle"; git pull; cd ..; fi done'
+alias cam='mpv av://v4l2:/dev/video0'	# use mpv to show webcam
+alias browse='fzf --bind "f5:execute(bat --paging always {})" --bind "f6:execute(vim {})"'
+alias clipssh='clpw.sh "Earth - T430"'
 
 #Change dir and list it
 cl() {
