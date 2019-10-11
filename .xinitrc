@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # ~/.xinitrc
 #
@@ -11,8 +11,8 @@ if [ -d /etc/X11/xinit/xinitrc.d ]; then
   unset f
 fi
 
-[ -f /etc/xprofile ] && source /etc/xprofile
-[ -f ~/.xprofile ] && source ~/.xprofile
+[[ -f /etc/xprofile ]] && source /etc/xprofile
+[[ -f ~/.xprofile ]] && source ~/.xprofile
 
 export BROWSER=qutebrowser
 
@@ -21,7 +21,7 @@ xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
 
 devmon --no-gui &                   # udiskie replacement without dependencys, polkit etc.
 sh .fehbg &                         # sets background image
-/usr/local/bin/bat_low_warning &    # Low battery notifications
+# /usr/local/bin/bat_low_warning &    # Low battery notifications
 
 # start WM and enable WM logging
 exec /usr/bin/i3 -V > ~/.config/i3/i3.log

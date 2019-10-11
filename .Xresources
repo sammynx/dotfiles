@@ -27,7 +27,7 @@
  URxvt*transparent:                    true
 ! URxvt*tintColor:                      color
 ! Urxvt*shading: 0-99 darkens, 101-200 lightens
- URxvt*shading:                        10
+ URxvt*shading:                        30
 ! URxvt*blurRadius:                     HxV
 ! URxvt*fading:                         number
 ! URxvt*fadeColor:                      color
@@ -42,32 +42,32 @@
 ! URxvt*cursorUnderline:                boolean
 ! URxvt*cursorBlink:                    boolean
  URxvt*pointerBlank:                   true
- URxvt*background:                     #2B2B2B
- URxvt*foreground:                     #DEDEDE
+ URxvt*background:                     #191C25
+ URxvt*foreground:                     #B5B4C9
 ! black
-URxvt*color0  : #2E3436
-URxvt*color8  : #555753
+URxvt*color0  : #2E313D
+URxvt*color8  : #5B5F71
 ! red
-URxvt*color1  : #CC0000
-URxvt*color9  : #EF2929
+URxvt*color1  : #CF8164
+URxvt*color9  : #FE9F7C
 ! green
-URxvt*color2  : #4E9A06
-URxvt*color10 : #8AE234
+URxvt*color2  : #76A065
+URxvt*color10 : #92C47E
 ! yellow
-URxvt*color3  : #C4A000
-URxvt*color11 : #FCE94F
+URxvt*color3  : #AB924C
+URxvt*color11 : #D2B45F
 ! blue
-URxvt*color4  : #3465A4
-URxvt*color12 : #729FCF
+URxvt*color4  : #8296B0
+URxvt*color12 : #A0B9D8
 ! magenta
-URxvt*color5  : #75507B
-URxvt*color13 : #AD7FA8
+URxvt*color5  : #A18DAF
+URxvt*color13 : #C6AED7
 ! cyan
-URxvt*color6  : #06989A
-URxvt*color14 : #34E2E2
+URxvt*color6  : #659EA2
+URxvt*color14 : #7DC2C7
 ! white
-URxvt*color7  : #D3D7CF
-URxvt*color15 : #EEEEEC
+URxvt*color7  : #B5B4C9
+URxvt*color15 : #F0ECFE
 ! URxvt*color0:                         black
 ! URxvt*color1:                         red3
 ! URxvt*color2:                         green3
@@ -84,9 +84,9 @@ URxvt*color15 : #EEEEEC
 ! URxvt*color13:                        magenta
 ! URxvt*color14:                        cyan
 ! URxvt*color15:                        white
-URxvt*colorBD:                        #d7d7d7
-URxvt*colorIT:                        #87af5f
-URxvt*colorUL:                        #87afd7
+! URxvt*colorBD:                        #d7d7d7
+! URxvt*colorIT:                        #87af5f
+! URxvt*colorUL:                        #87afd7
 ! URxvt*colorRV:                        color
 ! URxvt*underlineColor:                 color
 ! URxvt*scrollColor:                    color
@@ -99,7 +99,8 @@ URxvt*colorUL:                        #87afd7
 ! URxvt*pointerColor2:                  color
 ! URxvt*borderColor:                    color
 ! URxvt*iconFile:                       file
- URxvt*font:                           xft:Hack:pixelsize=11,xft:Inconsolata:pixelsize=12,xft:Symbola:pixelsize=10
+ URxvt*font:                           xft:Hack:size=14,xft:DejaVuSansMono
+! URxvt*font:                           xft:Anonymous Pro:pixelsize=22
 ! URxvt*font:                           xft:DejaVuSansMono:size=9
 ! URxvt*boldFont:                       xft:Inconsolata-Bold:pixelsize=12
 ! URxvt*italicFont:                     fontname
@@ -111,7 +112,7 @@ URxvt*colorUL:                        #87afd7
 ! URxvt*imFont:                         fontname
 ! URxvt*title:                          string
 ! URxvt*iconName:                       string
- URxvt*saveLines:                      3000
+ URxvt*saveLines:                      5000
 ! URxvt*buffered:                       boolean
 ! URxvt*depth:                          number
 ! URxvt*visual:                         number
@@ -137,8 +138,8 @@ URxvt*secondaryScroll:                0
 ! URxvt*perl-eval:                      perl-eval
 URxvt*perl-ext-common:                 default,resize-font,matcher
 ! URxvt*perl-ext:                       
-! URxvt*iso14755:                       false
-! URxvt*iso14755_52:                    false
+URxvt*iso14755:                       false
+URxvt*iso14755_52:                    false
 ! URxvt*xrm:                            string
 URxvt*keysym.Shift-Up:                  command:\033]720;1\007
 URxvt*keysym.Shift-Down:                command:\033]721;1\007 

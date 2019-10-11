@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
-xrdb -load /home/jerry/.Xresources
+[[ -f ~/.Xresources ]] && xrdb -merge -I$HOME ~/.Xresources
 
