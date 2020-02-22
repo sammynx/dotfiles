@@ -24,8 +24,6 @@ HISTTIMEFORMAT="%d/%m/%y %T "
 HISTCONTROL=ignorespace
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 
-export MANPAGER='less -s -M +Gg'
-
 # History completion
 bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'
@@ -53,14 +51,7 @@ FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*" -
 #----------------------------------------------------------
 # Modified commands
 #----------------------------------------------------------
-alias du="du -h"
 alias cal="cal -m"
-alias grep="grep --color=auto "
-alias mkdir="mkdir -p -v"
-alias rm="rm -Iv --one-file-system"
-alias cp="cp -v --reflink=auto "
-alias mv="mv -v"
-alias df="df -kTh"
 alias feh="feh --scale-down --draw-exif"
 # forgot sudo!
 alias cmon='cmd="$(fc -ln -1)"; sudo $cmd'
@@ -75,16 +66,11 @@ alias sudo='sudo '
 #-------------------------------------------------------------
 # The 'ls' family (this assumes you use a recent GNU ls).
 #-------------------------------------------------------------
-# Add colors for filetype and  human-readable sizes by default on 'ls':
-alias ls="ls -h --color "
 alias lx="ls -lXB"         #  Sort by extension.
 alias lk="ls -lSr"         #  Sort by size, biggest last.
 alias lt="ls -ltr"         #  Sort by date, most recent last.
 alias lc="ls -ltcr"        #  Sort by/show change time,most recent last.
 alias lu="ls -ltur"        #  Sort by/show access time,most recent last.
-
-alias ll="ls -ltvL --group-directories-first "
-alias la="ll -A"           #  Show hidden files.
 
 #-------------------------------------------------------------
 # Fun aliases
@@ -97,10 +83,10 @@ alias busy="cat /dev/urandom | hexdump -C | grep 'ca fe'"
 alias psg="ps aux | grep -v grep | grep -e VSZ -i -e"
 alias weather='curl -m 10 http://wttr.in/uithoorn'
 alias moon='curl -m 10 http://wttr.in/Moon'
-alias bundlesupdate='cd ~/.vim/bundle; for bundle in * ; do if [[ -d "$bundle/.git" ]]; then echo "Bundle: $bundle..."; cd "$bundle"; git pull; cd ..; fi done'
 alias cam='mpv av://v4l2:/dev/video0'	# use mpv to show webcam
-alias config='/usr/bin/git --git-dir=/home/jerry/.dotfiles/ --work-tree=/home/jerry'
-#alias i3-keys='rg --no-line-number ^bindsym\ $HOME/.config/i3/config | awk "{$1=""; print $0}" | fzf'
+
+# git bare repo for dotfiles, see: https://www.atlassian.com/git/tutorials/dotfiles
+alias dotfiles='/usr/bin/git --git-dir=/home/jerry/.dotfiles/ --work-tree=/home/jerry'
 
 #------------------------------------------------------------
 # Typos
@@ -123,43 +109,62 @@ man() {
     command man "$@"
 }
 
-#Change dir and list it
-cl() {
-    local dir="$1"
-	local dir="${dir:=$HOME}"
-    if [[ -d "$dir" ]]; then
-        cd "$dir" > /dev/null; ll
-    else
-        echo "::Bash cl: $dir: Directory not found"
-    fi
-}
-
-# Make dirictory and move to it.
-mcd() {
-	mkdir $1
-	cd $1
-}
-
-function extract()      # Handy Extract Program
+# The today todo list (vimwiki style).
+# usage: tdy [category] - default category: work
+function tdy() 
 {
-    if [ -f $1 ] ; then
-        case $1 in
-            *.tar.bz2)   tar xvjf $1 ;;
-            *.tar.gz)    tar xvzf $1 ;;
-            *.bz2)       bunzip2 $1 ;;
-            *.rar)       unrar x $1 ;;
-            *.gz)        gunzip $1 ;;
-            *.tar)       tar xvf $1 ;;
-            *.tbz2)      tar xvjf $1 ;;
-            *.tgz)       tar xvzf $1 ;;
-            *.zip)       unzip $1 ;;
-            *.Z)         uncompress $1 ;;
-            *.7z)        7z x $1 ;;
-            *)           echo "'$1' cannot be extracted via >extract<" ;;
-        esac
-    else
-        echo "'$1' is not a valid file!"
-    fi
+	category=${1:-work}
+	tdy_folder="${TDY_PATH}/${category}"
+	tdy_current_file="${tdy_folder}/$(date +'%Y/%m/%Y.%m.%d').wiki"
+	tdy_current_folder="${tdy_current_file%/*}"
+	tdy_previous_file=$(find "$tdy_folder" -type f | sort -nr | head -n1)
+
+	mkdir -p "${tdy_current_folder}"
+
+	if [[ ! -f "$tdy_current_file" ]]; then
+		# Replace the path and '.wiki' with equal signs
+		printf '%s\n' "= $(date +'%Y.%m.%d') =" >> "$tdy_current_file"
+		if [[ -f "$tdy_previous_file" ]]; then
+			# add not done items to the new file
+			grep --invert-match '\- \[X\]' "$tdy_previous_file" >> "$tdy_current_file"
+		fi
+	fi
+
+	if [[ -t 1 ]]; then
+		"$EDITOR" "${tdy_current_file}"
+	else
+		# We're in a pipe, so let's cat this instead
+		cat "${tdy_current_file}"
+	fi
+}
+
+# takes number of hours and minutes + message and notifies you
+function timer() 
+{ 
+	time_string=$1
+	if [[ "$time_string" =~ ^[0-9]+[:][0-9]+$ ]]; then
+		hours=${time_string/:*/}
+		minutes=${time_string/*:/}
+		seconds=$(( ( (hours * 60) + minutes ) * 60 ))
+		time_hm="${hours}h:${minutes}m"
+	elif [[ "$time_string" =~ ^[0-9]+$ ]]; then
+		seconds=$(( time_string * 60 ))
+		time_hm="${time_string}m"
+	else
+		printf '%s' "error: $time_string is not a number" >&2; return 1
+	fi
+
+	shift
+	message=$*
+	if [[ -z "$message" ]]; then
+		printf '%s' "error: ne need a message as well" >&2; return 1
+	fi
+
+	notify-send "Timer: $message" "Waiting for ${time_hm}"
+	(nohup sleep "$seconds" &> /dev/null && notify-send "Timer: $message" "${time_hm} has passed" &)
 }
 
 # }}}
+
+# load common aliasses and functions.
+source ~/.bash_common
