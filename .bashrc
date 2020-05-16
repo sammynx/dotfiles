@@ -51,6 +51,7 @@ FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*" -
 #----------------------------------------------------------
 # Modified commands
 #----------------------------------------------------------
+alias startx="ssh-agent startx"
 alias cal="cal -m"
 alias feh="feh --scale-down --draw-exif"
 # forgot sudo!
@@ -96,6 +97,10 @@ alias sytemctl="systemctl"
 # }}}
 
 # Functions {{{
+
+gosnips() {
+	rg --no-heading --no-filename --no-line-number ^snippet ~/.vim/UltiSnips/go.snippets ~/.vim/plugged/govim/UltiSnips/go.snippets | awk 'BEGIN{FS="\""} {printf("%-20s-%s%s\n", $1, $2, $3)}' | column
+}
 
 # Color man pages
 man() {
@@ -157,7 +162,7 @@ function timer()
 	shift
 	message=$*
 	if [[ -z "$message" ]]; then
-		printf '%s' "error: ne need a message as well" >&2; return 1
+		printf '%s' "error: need a message as well" >&2; return 1
 	fi
 
 	notify-send "Timer: $message" "Waiting for ${time_hm}"

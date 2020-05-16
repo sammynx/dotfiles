@@ -99,7 +99,7 @@ URxvt*color15 : #F0ECFE
 ! URxvt*pointerColor2:                  color
 ! URxvt*borderColor:                    color
 ! URxvt*iconFile:                       file
- URxvt*font:                           xft:Hack:size=14,xft:DejaVuSansMono
+ URxvt*font:                           xft:Hack:size=14,xft:Awesome,xft:DejaVuSansMono
 ! URxvt*font:                           xft:Anonymous Pro:pixelsize=22
 ! URxvt*font:                           xft:DejaVuSansMono:size=9
 ! URxvt*boldFont:                       xft:Inconsolata-Bold:pixelsize=12

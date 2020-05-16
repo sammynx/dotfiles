@@ -28,7 +28,6 @@ set shiftwidth=4
 set autoindent
 set background=dark
 
-" Finding Files:
 " Display all matching files when we tab complete
 set wildmenu
 set wildignorecase
@@ -50,21 +49,28 @@ set hlsearch
 " Continue searching from the top when hitting the bottom
 set wrapscan
 
-" Always show commands
-" set showcmd
-
 " Keep the cursur in the middle
 set scrolloff=999
+
+" gotags tagfile.
+" set tags=./.tags;
 
 " Tweaks for filebrowsing with netrw
 let g:netrw_banner=0        "Disable annoying banner
 let g:netrw_liststyle=3     "Tree view
 let g:netrw_browse_split=4  "Open in prior window
 
-" Taglist 
-let Tlist_Compact_Format = 1
-let Tlist_GainFocus_On_ToggleOpen = 1
-let Tlist_Close_On_Select = 1
+if executable('rg')
+  " Use ripgrep voor CtrlP
+  let g:ctrlp_user_command = 'rg --files --color=never %s'
+  let g:ctrlp_use_caching = 0
+  let g:ctrlp_working_path_mode = 'ra'
+  let g:ctrlp_switch_buffer = 'et'
+
+  " Set as grep command
+  set grepprg=rg\ --vimgrep\ --no-heading
+  set grepformat=%f:%l:%c:%m,%f:%l:%m
+endif
 
 " }}}
 
@@ -78,7 +84,6 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-" Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'govim/govim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'junegunn/fzf.vim'
@@ -90,16 +95,16 @@ Plug 'arzg/vim-substrata'
 
 " Initialize plugin system
 call plug#end()
+
 " }}}
 
-" General Mappings {{{
+" General Key Mappings {{{
 
 " Remap the ex-mode key.
 nnoremap ; :
 
-" Buffer navigation
-nnoremap gb :ls<CR>:buffer<Space>
-nnoremap gB :ls<CR>:vertical rightbelow sbuffer<Space>
+" remap window commands with 's'(never used s anyway).
+nnoremap s <C-W>
 
 " Cut/Copy/Paste
 vnoremap <C-c> "+yi
@@ -172,37 +177,6 @@ let g:lightline = {
 
 " }}}
 
-" Plugin vim-go ----------------------- {{{
-
-" let g:go_fmt_command = "goimports"
-" let g:go_decls_includes = "func,type"
-" let g:go_list_type = "quickfix"
-" " Automatic highlight same identifiers
-" let g:go_auto_sameids = 1
-
-" run :GoBuild or :GoTestCompile based on the go file
-" function! s:build_go_files()
-"   let l:file = expand('%')
-"   if l:file =~# '^\f\+_test\.go$'
-"     call go#test#Test(0, 1)
-"   elseif l:file =~# '^\f\+\.go$'
-"     call go#cmd#Build(0)
-"   endif
-" endfunction
-" 
-" autocmd myVimrc FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
-" autocmd myVimrc FileType go nmap <leader>r <Plug>(go-run)
-" autocmd myVimrc FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
-" autocmd myVimrc FileType go nmap <Leader>i <Plug>(go-info)
-" autocmd myVimrc FileType go nmap <Leader>d :GoDecls<CR>
-
-" " :A replaces :GoAlternate
-" autocmd myVimrc Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
-" 
-" " :AV opens :GoAlternate in vsplit
-" autocmd myVimrc Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
-" }}}
-
 " Plugin Ultisnips --------------------- {{{
 
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -212,23 +186,9 @@ let g:UltiSnipsEditSplit="vertical"
 
 " }}}
 
-" CtrlP --------------------------------- {{{
-
-if executable('rg')
-  " Use ripgrep voor CtrlP
-  let g:ctrlp_user_command = 'rg --files --color=never %s'
-  let g:ctrlp_use_caching = 0
-  let g:ctrlp_working_path_mode = 'ra'
-  let g:ctrlp_switch_buffer = 'et'
-
-  " Set as grep command
-  set grepprg=rg\ --vimgrep\ --no-heading
-  set grepformat=%f:%l:%c:%m,%f:%l:%m
-endif
-
-" }}}
 
 " Plugin Fzf ----------------------------------------- {{{
+
 " :Find
 " --column: Show column number
 " --line-number: Show line number
@@ -242,18 +202,35 @@ endif
 " --color: Search color options
 command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
 
+" [:Tags] command.
+let g:fzf_tags_command = 'ctags -R'
+
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>f :Files<CR>
+
+" tags in the current buffer, no creation of tags file.
+nnoremap <leader>t :BTags<CR>
+
 " }}}
 
 " Plugin govim {{{
 
+" Suggestion: By default, govim populates the quickfix window with diagnostics
+" reported by gopls after a period of inactivity, the time period being
+" defined by updatetime (help updatetime). Here we suggest a short updatetime
+" time in order that govim/Vim are more responsive/IDE-like
+set updatetime=700
+
 set mouse=a
 set signcolumn=yes
 
-autocmd myVimrc Filetype go nnoremap <buffer> <localleader>h : <C-u>call GOVIMHover()<CR>
-autocmd myVimrc Filetype go nnoremap <buffer> <localleader>r : <C-u>call GOVIMReferences()<CR>
-autocmd myVimrc Filetype go nnoremap <buffer> <localleader>n : <C-u>call GOVIMRename()<CR>
+call govim#config#Set("Staticcheck", 1)
 
-autocmd myVimrc FileType go nnoremap <buffer> <localleader>b :cexpr system('go build -o /tmp/gobuild.tmp')<cr>:cw<cr>
+autocmd myVimrc Filetype go nnoremap <buffer> <localleader>h : <C-u>call GOVIMHover()<CR>
+autocmd myVimrc Filetype go nnoremap <buffer> <localleader>r :<C-u>GOVIMReferences<cr>
+autocmd myVimrc Filetype go nnoremap <buffer> <localleader>n :<C-u>GOVIMRename<CR>
+autocmd myVimrc Filetype go nnoremap <buffer> <localleader>f :<C-u>GOVIMSuggestedFixes<CR>
+
 autocmd myVimrc FileType go nnoremap <buffer> <localleader>l :cexpr system('golangci-lint run')<cr>:cw<cr>
 
 " }}}
