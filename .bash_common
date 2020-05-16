@@ -62,3 +62,11 @@ function extract()
 
 	return $?
 }
+
+decrypt() {
+    openssl enc -d -aes-256-cbc -pbkdf2 -in $1 -out $1.decrypted
+}
+
+encrypt() {
+    openssl enc -aes-256-cbc -pbkdf2 -salt -in $1 -out $1.encrypted
+}

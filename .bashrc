@@ -86,8 +86,12 @@ alias weather='curl -m 10 http://wttr.in/uithoorn'
 alias moon='curl -m 10 http://wttr.in/Moon'
 alias cam='mpv av://v4l2:/dev/video0'	# use mpv to show webcam
 
+alias browse='fzf --bind "f5:execute(bat --paging always {})" --bind "f6:execute(vim {})"'
+alias clipssh='clpw.sh "Earth - T430"'
+
 # git bare repo for dotfiles, see: https://www.atlassian.com/git/tutorials/dotfiles
 alias dotfiles='/usr/bin/git --git-dir=/home/jerry/.dotfiles/ --work-tree=/home/jerry'
+alias config='/usr/bin/git --git-dir=/home/jerry/.dotfiles/ --work-tree=/home/jerry'
 
 #------------------------------------------------------------
 # Typos
