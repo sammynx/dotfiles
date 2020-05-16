@@ -1,0 +1,19 @@
+[user]
+	email = jerry.stevens@dutchsec.com
+	name = Jerry Stevens
+[core]
+    pager = delta --plus-color="#012800" --minus-color="#340001"
+[interactive]
+    diffFilter = delta --color-only
+[alias]
+	co = checkout
+	cam = commit -am
+	st = status
+	br = branch
+	hist = log --pretty=format:\"%C(yellow)%h%Creset %ad | %C(cyan)%s%Creset%Cblue%d%Creset %Cgreen[%an]%Creset\" --date=short
+[url "ssh://git@gitlab.com/"]
+	insteadOf = https://gitlab.com/
+[commit]
+	template = /home/jerry/projects/commit.template
+[init]
+	templateDir = /home/jerry/.config/git/template
