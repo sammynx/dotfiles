@@ -1,0 +1,10 @@
+[user]
+	email = jerry@jerrystevens.nl
+	name = Jerry Stevens
+[alias]
+	co = checkout
+	ci = commit -m
+	st = status
+	br = branch
+	cam = commit -am
+	hist = log --pretty=format:\"%C(yellow)%h%Creset %ad | %C(cyan)%s%Creset%Cblue%d%Creset %Cgreen[%an]%Creset\" --date=short
