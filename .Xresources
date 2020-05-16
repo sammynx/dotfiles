@@ -169,3 +169,4 @@ URxvt*matcher.rend.0:                 Uline Bold fg5
 ! URxvt*tabbar-bg:                      colour
 ! URxvt*tabbar-fg:                      colour
 URxvt*url-launcher:                   /usr/bin/xdg-open
+Xcursor.size: 24

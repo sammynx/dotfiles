@@ -21,7 +21,8 @@ shopt -s cmdhist
 HISTSIZE=9999
 HISTIGNORE="!*"
 HISTTIMEFORMAT="%d/%m/%y %T "
-HISTCONTROL=ignorespace
+HISTCONTROL=ignoreboth
+
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 
 # History completion

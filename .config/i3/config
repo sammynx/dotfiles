@@ -231,7 +231,7 @@ assign [class="qutebrowser"] 1
 
 # custom window settings
 for_window [class="qutebrowser"] border pixel 1
-for_window [class="URxvt" instance="scratchpad"] border pixel 1; move scratchpad 
+for_window [class="URxvt" instance="scratchpad"] border pixel 1, move scratchpad 
 
 # Start some apps
 # exec --no-startup-id i3-msg 'exec --no-startup-id qutebrowser'
