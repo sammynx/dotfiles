@@ -14,3 +14,12 @@ export MANPAGER='less -s -M +Gg'
 
 # tdy (today's todo list) path for tdy()
 export TDY_PATH=$HOME/vimwiki/tdy
+
+export QT_QPA_PLATFORM=wayland
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+
+alias startx='ssh-agent startx'
+
+# if [ -z $DISPLAY ] && [ "$(tty)" == "/dev/tty1" ]; then
+#   exec sway
+# fi

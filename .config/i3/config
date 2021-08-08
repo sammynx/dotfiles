@@ -189,7 +189,8 @@ bar {
 }
 
 # set $Locker i3lock --tiling --image=/home/jerry/pictures/wallpapers/RumTN.png && sleep 1
-set $Locker i3lock --tiling --image /home/jerry/pictures/wallpapers/arch-blue-dark-reflect.png --nofork && sleep 1
+# set $Locker i3lock --tiling --image /home/jerry/pictures/wallpapers/arch-blue-dark-reflect.png --nofork && sleep 1
+set $Locker i3lock --tiling --image=/usr/share/archlinux/wallpaper/arch-logo-1920x1200.png --nofork && sleep 1
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend.
@@ -214,10 +215,11 @@ mode "$mode_system" {
 bindsym $mod+Shift+q mode "$mode_system"
 
 # Use external monitor.
-set $mode_display ext. screen (w) work on, (x) work off
+set $mode_display ext. screen (d) dell, (o) dell only, (x) normal (no external)
 mode "$mode_display" {
-	bindsym w exec --no-startup-id /usr/local/scripts/samsung-curved.sh on, mode "default"
-	bindsym x exec --no-startup-id /usr/local/scripts/samsung-curved.sh off, mode "default"
+	bindsym d exec --no-startup-id /home/jerry/.screenlayout/home_dell.sh, mode "default"
+	bindsym o exec --no-startup-id /home/jerry/.screenlayout/home_dell_only.sh, mode "default"
+	bindsym x exec --no-startup-id /home/jerry/.screenlayout/normal.sh, mode "default"
 
 	# back to normal.
 	bindsym Return mode "default
@@ -226,7 +228,7 @@ mode "$mode_display" {
 bindsym $mod+m mode "$mode_display"
 
 # workspace assignment (use "xprop")
-assign [class="qutebrowser"] 1
+# assign [class="qutebrowser"] output primary
 
 # custom window settings
 for_window [class="qutebrowser"] border pixel 1
@@ -234,6 +236,6 @@ for_window [class="URxvt" instance="scratchpad"] border pixel 1, move scratchpad
 
 # Start some apps
 # exec --no-startup-id i3-msg 'exec --no-startup-id qutebrowser'
-exec --no-startup-id qutebrowser
+exec --no-startup-id i3-msg 'workspace 1; exec qutebrowser'
 exec --no-startup-id urxvt -name scratchpad -e bash
 

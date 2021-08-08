@@ -14,8 +14,6 @@ fi
 [[ -f /etc/xprofile ]] && source /etc/xprofile
 [[ -f ~/.xprofile ]] && source ~/.xprofile
 
-export BROWSER=qutebrowser
-
 # make CAPS_LOCK an ESC key
 xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
 

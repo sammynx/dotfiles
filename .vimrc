@@ -79,6 +79,7 @@ endif
 call plug#begin('~/.vim/plugged')
 
 " Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'vimwiki/vimwiki'
 Plug 'govim/govim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'junegunn/fzf.vim'
