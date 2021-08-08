@@ -1,0 +1,62 @@
+#
+# ~/.bash_aliasses: supplemental aliasses and functions.
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+#----------------------------------------------------------
+# Modified commands
+#----------------------------------------------------------
+alias du="du -h"
+alias grep="grep --color=auto "
+alias mkdir="mkdir -p -v"
+alias rm="rm -Iv --one-file-system"
+alias cp="cp -v --reflink=auto "
+alias mv="mv -v"
+alias df="df -kTh"
+alias startx='ssh-agent startx'
+alias cal="cal -m"
+alias feh="feh --scale-down --draw-exif"
+# open vim with a file selected in filechooser.
+alias vimf='file=$(fzf --preview "bat --line-range :80 --color always {}"); pushd $(dirname $file) > /dev/null; vim $(basename $file); popd > /dev/null'
+# restore a previously saved session.
+alias vims='vim -S Session.vim'
+
+# make sudo see aliasses and reset the timeout.
+alias sudo='sudo -v; sudo '
+
+#------------------------------------------------------------
+# git
+#------------------------------------------------------------
+gcob='git branch | fzf | xargs git checkout'
+
+# git bare repo for dotfiles, see: https://www.atlassian.com/git/tutorials/dotfiles
+alias dotfiles='/usr/bin/git --git-dir=/home/jerry/.dotfiles/ --work-tree=/home/jerry'
+
+#-------------------------------------------------------------
+# The 'ls' family (this assumes you use a recent GNU ls).
+#-------------------------------------------------------------
+alias ls="ls -h --color "
+alias ll="ls -ltvL --group-directories-first "
+alias la="ll -A"           #  Show hidden files.
+alias lx="ls -lXB"         #  Sort by extension.
+alias lk="ls -lSr"         #  Sort by size, biggest last.
+alias lt="ls -ltr"         #  Sort by date, most recent last.
+alias lc="ls -ltcr"        #  Sort by/show change time,most recent last.
+alias lu="ls -ltur"        #  Sort by/show access time,most recent last.
+
+#----------------------------------------------------------
+# New commands
+#----------------------------------------------------------
+alias cmon='sudo $(fc -ln -1)'
+alias psg="ps aux | grep -v grep | grep -e VSZ -i -e"
+alias weather='curl -m 10 http://wttr.in/uithoorn'
+alias moon='curl -m 10 http://wttr.in/Moon'
+alias cam='mpv av://v4l2:/dev/video2 --profile=low-latency --untimed'	# use mpv to show webcam
+alias busy="cat /dev/urandom | hexdump -C | grep 'ca fe'"
+
+#------------------------------------------------------------
+# Typos
+#-----------------------------------------------------------
+alias sytemctl="systemctl"

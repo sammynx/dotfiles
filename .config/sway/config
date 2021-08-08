@@ -1,0 +1,275 @@
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+# This font is widely installed, provides lots of unicode glyphs, right-to-left
+# text rendering and scalability on retina/hidpi displays (thanks to pango).
+font pango:DejaVu Sans Mono 9
+
+# Tabbed layout for new workspaces
+workspace_layout tabbed
+
+# Set maximum size for floating windows
+floating_maximum_size 2560 x 1440
+
+workspace_auto_back_and_forth yes
+
+### Variables:
+	set $mod Mod4
+
+	# home row direction keys like vim.
+	set $left h
+	set $down j
+	set $up k
+	set $right l
+
+	# terminal emulator
+	set $term foot
+
+	# Use Mouse+$mod to drag floating windows to their wanted position
+	floating_modifier $mod
+
+
+### Key Bindings
+#
+## Basics
+#
+	# start a terminal
+	bindsym $mod+Return exec $term
+
+	# kill focused window
+	bindsym $mod+q kill
+
+	# use wofi a dmenu replacement.
+	bindsym $mod+d exec wofi
+
+	# split in horizontal orientation
+	bindsym $mod+b splith
+
+	# split in vertical orientation
+	bindsym $mod+v splitv
+
+	# change container layout (stacked, tabbed, toggle all)
+	bindsym $mod+s layout stacking
+	bindsym $mod+w layout tabbed
+	bindsym $mod+e layout toggle all
+
+	# enter fullscreen mode for the focused container
+	bindsym $mod+f fullscreen
+
+	# toggle tiling / floating
+	bindsym $mod+Shift+space floating toggle
+
+	# change focus between tiling / floating windows
+	bindsym $mod+space focus mode_toggle
+
+	# focus the parent container
+	bindsym $mod+a focus parent
+
+	# focus the child container
+	#bindsym $mod+d focus child
+
+	# Make the currently focused window a scratchpad
+	bindsym $mod+Shift+minus move scratchpad
+
+	# Show the first scratchpad window
+	bindsym $mod+minus scratchpad show
+
+	# reload the configuration file
+	bindsym $mod+Shift+c reload
+#
+## Move Around:
+#
+	# change focus
+	bindsym $mod+$left focus left
+	bindsym $mod+$down focus down
+	bindsym $mod+$up focus up
+	bindsym $mod+$right focus right
+
+	# alternatively, you can use the cursor keys:
+	bindsym $mod+Left focus left
+	bindsym $mod+Down focus down
+	bindsym $mod+Up focus up
+	bindsym $mod+Right focus right
+
+	# move focused window
+	bindsym $mod+Shift+$left move left
+	bindsym $mod+Shift+$down move down
+	bindsym $mod+Shift+$up move up
+	bindsym $mod+Shift+$right move right
+
+	# alternatively, you can use the cursor keys:
+	bindsym $mod+Shift+Left move left
+	bindsym $mod+Shift+Down move down
+	bindsym $mod+Shift+Up move up
+	bindsym $mod+Shift+Right move right
+
+	# cycle throw workspace
+	bindsym $mod+Tab workspace next
+	bindsym $mod+Shift+Tab workspace prev
+
+	# move current workspace to next output.
+	bindsym $mod+greater move workspace to output right
+
+	# switch to workspace
+	bindsym $mod+1 workspace 1
+	bindsym $mod+2 workspace 2
+	bindsym $mod+3 workspace 3
+	bindsym $mod+4 workspace 4
+	bindsym $mod+5 workspace 5
+	bindsym $mod+6 workspace 6
+	bindsym $mod+7 workspace 7
+	bindsym $mod+8 workspace 8
+	bindsym $mod+9 workspace 9
+	bindsym $mod+0 workspace 10
+
+	# move focused container to workspace
+	bindsym $mod+Shift+1 move container to workspace 1
+	bindsym $mod+Shift+2 move container to workspace 2
+	bindsym $mod+Shift+3 move container to workspace 3
+	bindsym $mod+Shift+4 move container to workspace 4
+	bindsym $mod+Shift+5 move container to workspace 5
+	bindsym $mod+Shift+6 move container to workspace 6
+	bindsym $mod+Shift+7 move container to workspace 7
+	bindsym $mod+Shift+8 move container to workspace 8
+	bindsym $mod+Shift+9 move container to workspace 9
+	bindsym $mod+Shift+0 move container to workspace 10
+#
+## Custom:
+#
+	# start a browser
+	#bindsym XF86Launch1 exec --no-startup-id qutebrowser
+
+	# set the keyboard volume controls and send update signal to i3blocks.
+	bindsym XF86AudioMute exec --no-startup-id pamixer --toggle-mute && pkill -RTMIN+1 i3blocks
+	bindsym XF86AudioLowerVolume exec --no-startup-id pamixer --allow-boost --decrease 5 && pkill -RTMIN+1 i3blocks
+	bindsym XF86AudioRaiseVolume exec --no-startup-id pamixer --allow-boost --increase 5 && pkill -RTMIN+1 i3blocks
+	bindsym XF86AudioMicMute exec --no-startup-id pamixer --source 1 --toggle-mute && pkill -RTMIN+1 i3blocks
+
+	# set the backlight controls.
+	bindsym F11 exec brightnessctl -q set 10%- && pkill -RTMIN+2 i3blocks
+	bindsym F12 exec brightnessctl -q set +10% && pkill -RTMIN+2 i3blocks
+	bindsym XF86MonBrightnessDown exec brightnessctl -q set 10%- && pkill -RTMIN+2 i3blocks
+	bindsym XF86MonBrightnessUp exec brightnessctl -q set +10% && pkill -RTMIN+2 i3blocks
+
+	# Make a screenshot of a selection of the screen (with mouse)
+	bindsym --release $mod+Shift+x exec grimshot --notify save area
+
+	# Make a screenshot of the active window
+	bindsym --release $mod+x exec grimshot --notify save active
+
+	# read 1 character and mark the current window with this character
+	# bindsym $mod+Shift+g exec i3-input -f 'pango:DejaVu Sans Mono 12' -F 'mark %s' -l 1 -P 'Mark: '
+
+	# read 1 character and go to the window with the character
+	# bindsym $mod+g exec i3-input -f 'pango:DejaVu Sans Mono 12' -F '[con_mark="%s"] focus' -l 1 -P 'Goto: '
+#
+## Modes:
+#
+	# resize window (you can also use the mouse for that)
+	mode "resize" {
+			# These bindings trigger as soon as you enter the resize mode
+
+			# Pressing left will shrink the window’s width.
+			# Pressing right will grow the window’s width.
+			# Pressing up will shrink the window’s height.
+			# Pressing down will grow the window’s height.
+			bindsym $left resize shrink width 10 px or 10 ppt
+			bindsym $down resize grow heigth 10 px or 10 ppt
+			bindsym $up resize shrink heigth 10 px or 10 ppt
+			bindsym $right resize grow width 10 px or 10 ppt
+
+			# same bindings, but for the arrow keys
+			bindsym Left resize shrink width 10 px or 10 ppt
+			bindsym Down resize grow height 10 px or 10 ppt
+			bindsym Up resize shrink height 10 px or 10 ppt
+			bindsym Right resize grow width 10 px or 10 ppt
+
+			# back to normal: Enter or Escape
+			bindsym Return mode "default"
+			bindsym Escape mode "default"
+	}
+	bindsym $mod+r mode "resize"
+
+	# Prompt for exit commands
+	set $mode_system (l) lock, (e) logout, (q) shutdown, (h) hibernate, (r) reboot, (s) suspend
+
+	mode "$mode_system" {
+		bindsym l exec --no-startup-id swaylock, mode "default"
+		bindsym e exec --no-startup-id swaymsg exit, mode "default"
+		bindsym q exec --no-startup-id systemctl poweroff, mode "default"
+		bindsym h exec --no-startup-id systemctl hibernate, mode "default"
+		bindsym r exec --no-startup-id systemctl reboot, mode "default"
+		bindsym s exec --no-startup-id systemctl suspend, mode "default"
+
+
+		# back to normal: Enter or Escape
+		bindsym Return mode "default"
+		bindsym Escape mode "default"
+	}
+	bindsym $mod+Shift+q mode "$mode_system"
+
+### Switches:
+	# disable external monitor on laptop lid close.
+	# set $monitor HDMI-A-2
+	# bindswitch --reload --locked lid:on output $monitor disable
+
+### Status Bar:
+	bar {
+			status_command i3blocks
+			font pango:DejaVu Sans Mono, Awesome 10
+
+			colors {
+				background #222222
+				statusline #fafafa
+				separator #666666
+		 
+				focused_workspace  #4c78dd #4c78dd #ffffff
+				active_workspace   #285577 #285577 #ffffff
+				inactive_workspace #333333 #333333 #888888
+				urgent_workspace   #2f343a #2f343a #ffffff
+				binding_mode       #2f343a #24343a #ffffff
+			}
+	}
+
+### Inputs:
+	# caps-lock as escape.
+	# input "*" {
+	# 	xkb_options "caps:escape"
+	# }
+
+	input "1:1:AT_Translated_Set_2_keyboard" {
+		xkb_options "lv3:ralt_switch,eurosign:5"
+	}
+
+### Outputs:
+	# Use external monitor Samsung curved.
+	output HDMI-A-2 pos 0 0 res 3440x1440
+	output eDP-1 pos 3440 0 res 2560x1440 scale 1
+
+	exec swaymsg focus output HDMI-A-2
+
+	# set the background
+	output "*" bg /home/jerry/pictures/wallpapers/arch-blue-dark-reflect.png stretch
+
+### Startup:
+	# try to put workspace 1 on the biggest screen.
+	workspace 1 output HDMI-A-2 eDP-1
+
+	# workspace assignment (use "xprop")
+	assign [class="qutebrowser"] 1
+
+	# custom window settings
+	for_window [class="qutebrowser"] border pixel 1
+	for_window [app_id="scratchpad"] border pixel 1; move scratchpad 
+
+	# Start some apps
+	# exec --no-startup-id i3-msg 'exec --no-startup-id qutebrowser'
+	exec --no-startup-id qutebrowser
+	exec foot --app-id="scratchpad"
+
+	# notification daemon
+	exec mako
+
+	exec swayidle -w timeout 1200 'swaylock -f' before-sleep 'swaylock -f'
+
+
+include /etc/sway/config.d/*

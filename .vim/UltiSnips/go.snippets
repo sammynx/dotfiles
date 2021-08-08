@@ -2,8 +2,20 @@
 
 priority -10
 
-snippet todo "//TODO:..." b
-//TODO (`echo $USER`): ${0:desc}
+snippet testtable "test table" b
+testcases := []struct {
+	${1:arg} ${2:string}
+	${3:want} ${4:string}$5
+}{
+	{$1: $6, $3: $7$8},
+}
+$9
+for _, tc := range testcases {
+	got := $10
+	if got != tc.want {
+		t.Errorf("${11:got: %v, want: %v", got, tc.want})
+	}
+}$0
 endsnippet
 
 snippet errnot "return not implemented error" b
@@ -238,14 +250,12 @@ endsnippet
 # context Withcancel
 snippet ctxc "context.WithCancel(...)"
 ctx, cancel := context.WithCancel(${1:context.Background()})
-defer cancel()
-$0
+defer cancel()$0
 endsnippet
 
 snippet ctxt "context.WithTimeout(...)"
 ctx, cancel := context.WithTimeout(${1:context.Background()}, ${2:1*}time.${3:Second})
-defer cancel()
-$0
+defer cancel()$0
 endsnippet
 
 # create a new http request.
@@ -253,8 +263,7 @@ snippet req "http.NewRequest(...)" b
 req, err := http.NewRequest("${1:GET}", "/$2", ${3:nil})
 if err != nil {
 	${4:return err}
-}
-$0
+}$0
 endsnippet
 
 snippet resp "if resp, err := http.DefaultClient.Do(...)" b
@@ -305,40 +314,35 @@ endsnippet
 snippet err "Error return" !b
 if err != nil {
 	return err
-}
-${0}
+}${0}
 endsnippet
 
 # error log snippet
 snippet errl "Error with log.Fatal(err)" !b
 if err != nil {
 	log.Fatal(err)
-}
-${0}
+}${0}
 endsnippet
 
 # error multiple return
 snippet errn "Error return with two return values" !b
 if err != nil {
 	return ${1:nil}, ${2:err}
-}
-${0}
+}${0}
 endsnippet
 
 # error panic
 snippet errp "Error panic" !b
 if err != nil {
 	panic(${1})
-}
-${0}
+}${0}
 endsnippet
 
 # error test
 snippet errt "Error test fatal " !b
 if err != nil {
 	t.Fatal(err)
-}
-${0}
+}${0}
 endsnippet
 
 # error handle
@@ -346,8 +350,7 @@ snippet errh "Error handle and return" !b
 if err != nil {
 	${1}
 	return
-}
-${0}
+}${0}
 endsnippet
 
 # json field tag
@@ -424,6 +427,29 @@ endsnippet
 # sprintf
 snippet sp "fmt.Sprintf(...)"
 fmt.Sprintf("%${1:s}", ${2:var})
+endsnippet
+
+# copy file
+snippet copyfile "err = Copy(src, dst)"
+func CopyFile(src, dst string) error {
+	in, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, in)
+	if err != nil {
+		return err
+	}
+	return out.Close()
+}
 endsnippet
 
 # test function

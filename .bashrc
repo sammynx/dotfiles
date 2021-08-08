@@ -13,7 +13,7 @@ blue="$(tput setaf 12)"
 green="$(tput setaf 2)"
 yellow="$(tput setaf 11)"
 bold="$(tput bold)"
-PS1="\$? \[$bold\]\$(if [[ \${EUID} == 0 ]]; then echo \"\[$red\]\h\"; else echo \"\[$yellow\]\u@\h\"; fi)\[$blue\] \w \$\[$reset\] "
+PS1="\[\e]2;\$PWD\a\]\$? \[$bold\]\$(if [[ \${EUID} == 0 ]]; then echo \"\[$red\]\h\"; else echo \"\[$yellow\]\u@\h\"; fi)\[$blue\] \w \$\[$reset\] "
 
 # History
 shopt -s histappend
@@ -22,7 +22,11 @@ HISTSIZE=9999
 HISTIGNORE="!*"
 HISTTIMEFORMAT="%d/%m/%y %T "
 HISTCONTROL=ignorespace
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r;"
+# set window title.
+# PROMPT_COMMAND+="printf '\033]2;%s\033\\' '${PWD}';"
+# emit OSC 7 to open new terminal at current directory.
+PROMPT_COMMAND+='printf "\033]7;file://%s%s\033\\" "${HOSTNAME}" "${PWD}";'
 
 # History completion
 bind '"\e[A": history-search-backward'
@@ -44,64 +48,62 @@ shopt -s extglob
 # Enable history expansion with the SPACE key.
 bind Space:magic-space
 
-FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*" --glob "!.snapshots/*"'
+source /usr/share/fzf/key-bindings.bash
+source /usr/share/fzf/completion.bash
 
-# Alias {{{
+# load common aliasses and functions.
+source ~/.bash_aliasses
 
-#----------------------------------------------------------
-# Modified commands
-#----------------------------------------------------------
-alias startx="ssh-agent startx"
-alias cal="cal -m"
-alias feh="feh --scale-down --draw-exif"
-# forgot sudo!
-alias cmon='cmd="$(fc -ln -1)"; sudo $cmd'
-# open vim with a file selected in filechooser.
-alias vimf='file=$(fzf --preview "bat --line-range :80 --color always {}"); pushd $(dirname $file) > /dev/null; vim $(basename $file); popd > /dev/null'
-# restore a previously saved session.
-alias vims='vim -S Session.vim'
-
-# make sudo see aliasses
-alias sudo='sudo '
-
-#-------------------------------------------------------------
-# The 'ls' family (this assumes you use a recent GNU ls).
-#-------------------------------------------------------------
-alias lx="ls -lXB"         #  Sort by extension.
-alias lk="ls -lSr"         #  Sort by size, biggest last.
-alias lt="ls -ltr"         #  Sort by date, most recent last.
-alias lc="ls -ltcr"        #  Sort by/show change time,most recent last.
-alias lu="ls -ltur"        #  Sort by/show access time,most recent last.
-
-#-------------------------------------------------------------
-# Fun aliases
-#-------------------------------------------------------------
-alias busy="cat /dev/urandom | hexdump -C | grep 'ca fe'"
-
-#----------------------------------------------------------
-# New commands
-#----------------------------------------------------------
-alias psg="ps aux | grep -v grep | grep -e VSZ -i -e"
-alias weather='curl -m 10 http://wttr.in/uithoorn'
-alias moon='curl -m 10 http://wttr.in/Moon'
-alias cam='mpv av://v4l2:/dev/video0'	# use mpv to show webcam
-
-# git bare repo for dotfiles, see: https://www.atlassian.com/git/tutorials/dotfiles
-alias dotfiles='/usr/bin/git --git-dir=/home/jerry/.dotfiles/ --work-tree=/home/jerry'
-
-#------------------------------------------------------------
-# Typos
-#-----------------------------------------------------------
-alias sytemctl="systemctl"
-
-# }}}
+# forgit
+source /usr/share/zsh/plugins/forgit-git/forgit.plugin.zsh
 
 # Functions {{{
 
-gosnips() {
-	rg --no-heading --no-filename --no-line-number ^snippet ~/.vim/UltiSnips/go.snippets ~/.vim/plugged/govim/UltiSnips/go.snippets | awk 'BEGIN{FS="\""} {printf("%-20s-%s%s\n", $1, $2, $3)}' | column
+#Change dir and list it
+cl() {
+    local dir="$1"
+	local dir="${dir:=$HOME}"
+    if [[ -d "$dir" ]]; then
+        cd "$dir" > /dev/null; ll
+    else
+        echo "::Bash cl: $dir: Directory not found"
+    fi
 }
 
+# Make dirictory and move to it.
+mcd() {
+	mkdir $1 && cd $1
+}
+
+# Handy Extract Program
+function extract()
+{
+	(($#)) || return
+
+	if [[ ! -r $1 ]]; then
+            echo "$0: file is unreadable: \`$1'" >&2
+            return 1
+    fi
+
+	case $1 in
+		*.tar.bz2)   tar xvjf $1 ;;
+		*.tar.gz)    tar xvzf $1 ;;
+		*.bz2)       bunzip2 $1 ;;
+		*.rar)       unrar x $1 ;;
+		*.gz)        gunzip $1 ;;
+		*.tar)       tar xvf $1 ;;
+		*.tbz2)      tar xvjf $1 ;;
+		*.tgz)       tar xvzf $1 ;;
+		*.zip)       unzip $1 ;;
+		*.Z)         uncompress $1 ;;
+		*.7z)        7z x $1 ;;
+		*.xz)        unxz $1 ;;
+		*)           echo "$0: unrecognized file extension: '$1'" >&2
+					 return 1 ;;
+	esac
+
+	return $?
+}
 # Color man pages
 man() {
     LESS_TERMCAP_mb=$'\e[01;31m' \
@@ -169,7 +171,17 @@ function timer()
 	(nohup sleep "$seconds" &> /dev/null && notify-send "Timer: $message" "${time_hm} has passed" &)
 }
 
-# }}}
+# find-in-file - usage: fif <searchTerm>
+fif() {
+  if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
+  rg --files-with-matches --no-messages "$1" | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow' --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
+}
 
-# load common aliasses and functions.
-source ~/.bash_common
+# cdf - cd into the directory of the selected file
+cdf() {
+   local file
+   local dir
+   file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
+}
+
+# }}}

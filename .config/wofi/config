@@ -1,0 +1,11 @@
+term=foot
+width=600
+height=260
+prompt=
+show=drun
+location=center
+dynamic_lines=true
+allow_images=true
+image_size=24
+key_expand=Home
+gtk_dark=true

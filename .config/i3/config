@@ -30,9 +30,11 @@ workspace_auto_back_and_forth yes
 
 # start a terminal
 bindsym $mod+Return exec urxvt
+bindsym $mod+Mod1+e exec urxvt -e vim
 
 # start a terminal in current directory
 bindsym $mod+Shift+Return exec urxvt -cd "$(xcwd)"
+bindsym $mod+Mod1+v exec urxvt -cd "$(xcwd)" -e vim
 
 # start a browser
 #bindsym XF86Launch1 exec --no-startup-id qutebrowser
@@ -124,6 +126,9 @@ bindsym $mod+Shift+Right move right
 # cycle throw workspace
 bindsym $mod+Tab workspace next
 bindsym $mod+Shift+Tab workspace prev
+
+# move current workspace to next output.
+bindsym $mod+Ctrl+greater move workspace to output right
 
 # switch to workspace
 bindsym $mod+1 workspace 1
@@ -229,10 +234,12 @@ mode "$mode_system" {
 bindsym $mod+Shift+q mode "$mode_system"
 
 # Use external monitor.
-set $mode_display ext. screen (w) work on, (x) work off
+set $mode_display ext. screen (h) HDMI-2 on, (x) HDMI-2 off
 mode "$mode_display" {
-	bindsym w exec --no-startup-id /usr/local/scripts/samsung-curved.sh on, mode "default"
-	bindsym x exec --no-startup-id /usr/local/scripts/samsung-curved.sh off, mode "default"
+	# bindsym w exec --no-startup-id /usr/local/scripts/samsung-curved.sh on, mode "default"
+	# bindsym x exec --no-startup-id /usr/local/scripts/samsung-curved.sh off, mode "default"
+	bindsym h exec --no-startup-id xrandr --output HDMI-2 --auto --left-of eDP-1, mode "default"
+	bindsym x exec --no-startup-id xrandr --output HDMI-2 --auto --off, mode "default"
 
 	# back to normal.
 	bindsym Return mode "default

@@ -4,7 +4,44 @@ augroup myVimrc
 	autocmd!
 augroup END
 
+" Vim-Plug -----------------------------------------------
+
+if empty(glob('/home/jerry/.vim/autoload/plug.vim'))
+  silent !curl -fLo /home/jerry/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin('/home/jerry/.vim/plugged')
+
+Plug 'vimwiki/vimwiki'
+Plug 'govim/govim'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'junegunn/fzf.vim', { 'do': { -> fzf#install() } }
+Plug 'itchyny/lightline.vim'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-fugitive'
+Plug 'SirVer/ultisnips'
+Plug 'arzg/vim-substrata'
+Plug 'tyrannicaltoucan/vim-deep-space'
+Plug 'arcticicestudio/nord-vim'
+Plug 'cocopon/iceberg.vim'
+Plug 'rust-lang/rust.vim'
+Plug 'elixir-editors/vim-elixir'
+Plug 'ziglang/zig.vim'
+
+" Initialize plugin system
+call plug#end()
+
+
 " General settings {{{
+
+" 'q  : q, number of edited file remembered
+" <m  : m, number of lines saved for each register
+" :p  : p, number of  history cmd lines remembered
+" %   : saves and restore the buffer list
+" n...: fully qualified path to the viminfo files (note that this is a literal "n")
+set viminfo='20,<100,:100,%,n/home/jerry/.vim/.viminfo
 
 " Use Vim settings, rather than Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
@@ -13,14 +50,21 @@ set nocompatible
 set shell=/usr/bin/bash
 set autowrite
 
-let maplocalleader = ","
-
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 
 " Syntax highlighting
 filetype plugin indent on
 syntax on
+
+" colorscheme
+colorscheme nord
+
+let g:deepspace_italics=1
+
+if &diff
+	colorscheme nord
+endif
 
 set tabstop=4
 set softtabstop=4
@@ -52,6 +96,11 @@ set wrapscan
 " Keep the cursur in the middle
 set scrolloff=999
 
+set number relativenumber
+
+set nobackup
+set nowritebackup
+
 " gotags tagfile.
 " set tags=./.tags;
 
@@ -74,49 +123,45 @@ endif
 
 " }}}
 
-" Vim-Plug ----------------------------------------------- {{{
-
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
-call plug#begin('~/.vim/plugged')
-
-Plug 'govim/govim'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'junegunn/fzf.vim'
-Plug 'itchyny/lightline.vim'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-fugitive'
-Plug 'SirVer/ultisnips'
-Plug 'arzg/vim-substrata'
-
-" Initialize plugin system
-call plug#end()
-
-" }}}
-
 " General Key Mappings {{{
+
+let mapleader = "\<space>"
+let maplocalleader = "\\"
 
 " Remap the ex-mode key.
 nnoremap ; :
+xnoremap ; :
+
+" clear search highlightning.
+nnoremap <silent> <leader><space> :nohlsearch<CR>
 
 " remap window commands with 's'(never used s anyway).
 nnoremap s <C-W>
 
-" Cut/Copy/Paste
-vnoremap <C-c> "+yi
-vnoremap <C-x> "+c
-vnoremap <C-v> c<ESC>"+p
-inoremap <C-v> <C-r><C-o>+
+" Wayland Copy/Paste
+xnoremap "+y y:call system("wl-copy", @")<cr>
+nnoremap <silent> "+p :let @"=substitute(system("wl-paste --no-newline"), '<C-v><C-m>', '', 'g')<cr>p
+nnoremap <silent> "*p :let @"=substitute(system("wl-paste --no-newline --primary"), '<C-v><C-m>', '', 'g')<cr>p
 
 " Copy/Paste to the system clipboard
-vnoremap <leader>y "+y
-nnoremap <leader>p "+p
+" vnoremap <leader>y "+y
+" nnoremap <leader>p "+p
 
-nnoremap <leader>n :setlocal relativenumber!<cr>
+" Presentation.
+nnoremap <leader>F :.!toilet -w 200 -f standard<CR>
+nnoremap <leader>f :.!toilet -w 200 -f small<CR>
+nnoremap <leader>B :.!toilet -f term -F border<CR>
+
+" next/previous slide
+noremap <Left> :silent bp<CR> :redraw!<CR>
+noremap <Right> :silent bn<CR> :redraw!<CR>
+
+" clear distractions on screen.
+nnoremap <F2> :setlocal number! relativenumber! hidden!<CR>
+
+" create a new session.
+nnoremap <leader>m :call MakeSession()<CR>
+
 
 " }}}
 
@@ -130,9 +175,54 @@ if !exists(":DiffOrig")
 		  \ | wincmd p | diffthis
 endif
 
+" Creates a session
+function! MakeSession()
+  let b:sessiondir = $HOME . "/.vim/sessions" . getcwd()
+  if (filewritable(b:sessiondir) != 2)
+    exe 'silent !mkdir -p ' b:sessiondir
+    redraw!
+  endif
+  let b:sessionfile = b:sessiondir . '/session.vim'
+  exe "mksession! " . b:sessionfile
+endfunction
+
+" Updates a session, BUT ONLY IF IT ALREADY EXISTS
+function! UpdateSession()
+  " let b:sessiondir = $HOME . "/.vim/sessions" . getcwd()
+  " let b:sessionfile = b:sessiondir . "/session.vim"
+  " if (filereadable(b:sessionfile))
+	" exe "mksession! " . b:sessionfile
+	" echo "updating session"
+  " endif
+  if v:this_session != ""
+	  echo "updating session"
+	  exe 'mksession! ' . v:this_session
+  endif
+endfunction
+
+" Loads a session if it exists
+function! LoadSession()
+  if argc() == 0
+    let b:sessiondir = $HOME . "/.vim/sessions" . getcwd()
+    let b:sessionfile = b:sessiondir . "/session.vim"
+    if (filereadable(b:sessionfile))
+      exe 'source ' b:sessionfile
+    else
+      echo "No session loaded."
+    endif
+  else
+    let b:sessionfile = ""
+    let b:sessiondir = ""
+  endif
+endfunction
+
+
 " }}}
 
 " Filetype Settings ---------------------- {{{
+
+autocmd myVimrc VimEnter * nested :call LoadSession()
+autocmd myVimrc VimLeave * :call UpdateSession()
 
 autocmd myVimrc FileType vim setlocal foldmethod=marker
 autocmd myVimrc FileType vim setlocal foldlevelstart=0
@@ -147,7 +237,7 @@ autocmd myVimrc FileType cpp setlocal shiftwidth=2 tabstop=2
 " force markdown filetype on .md
 autocmd myVimrc BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 
-autocmd myVimrc FileType c nnoremap <C-l> :TlistToggle<CR>
+autocmd myVimrc FileType c nnoremap <buffer> <C-l> :TlistToggle<CR>
 
 " }}}
 
@@ -179,9 +269,10 @@ let g:lightline = {
 
 " Plugin Ultisnips --------------------- {{{
 
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
 let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsJumpForwardTrigger="<C-b>"
+let g:UltiSnipsJumpBackwardTrigger="<C-z>"
 let g:UltiSnipsEditSplit="vertical"
 
 " }}}
@@ -211,6 +302,23 @@ nnoremap <leader>f :Files<CR>
 " tags in the current buffer, no creation of tags file.
 nnoremap <leader>t :BTags<CR>
 
+" Customize fzf colors to match your color scheme
+" - fzf#wrap translates this to a set of `--color` options
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
+
 " }}}
 
 " Plugin govim {{{
@@ -224,7 +332,8 @@ set updatetime=700
 set mouse=a
 set signcolumn=yes
 
-call govim#config#Set("Staticcheck", 1)
+" call govim#config#Set("Staticcheck", 1)
+autocmd myVimrc Filetype go call govim#config#Set("CompletionBudget", "200ms")
 
 autocmd myVimrc Filetype go nnoremap <buffer> <localleader>h : <C-u>call GOVIMHover()<CR>
 autocmd myVimrc Filetype go nnoremap <buffer> <localleader>r :<C-u>GOVIMReferences<cr>
@@ -233,6 +342,10 @@ autocmd myVimrc Filetype go nnoremap <buffer> <localleader>f :<C-u>GOVIMSuggeste
 
 autocmd myVimrc FileType go nnoremap <buffer> <localleader>l :cexpr system('golangci-lint run')<cr>:cw<cr>
 
+" }}}
+
+" Plugin Rust {{{
+let g:rustfmt_autosave = 1
 " }}}
 
 " }}}
